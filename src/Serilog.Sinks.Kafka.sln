@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Kafka", "Serilog.Sinks.Kafka\Serilog.Sinks.Kafka.csproj", "{DA1920B5-0882-4F96-B00F-935DD0B69ADC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Kafka.Test", "Serilog.Sinks.Kafka.Test\Serilog.Sinks.Kafka.Test.csproj", "{0F16414D-933C-429F-80A2-CBE7579E81E2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{DA1920B5-0882-4F96-B00F-935DD0B69ADC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA1920B5-0882-4F96-B00F-935DD0B69ADC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA1920B5-0882-4F96-B00F-935DD0B69ADC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F16414D-933C-429F-80A2-CBE7579E81E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F16414D-933C-429F-80A2-CBE7579E81E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F16414D-933C-429F-80A2-CBE7579E81E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F16414D-933C-429F-80A2-CBE7579E81E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
