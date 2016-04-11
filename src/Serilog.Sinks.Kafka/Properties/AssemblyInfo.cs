@@ -27,11 +27,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Serilog.Sinks.Kafka")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Serilog Kafka Sinks")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Wes Day")]
+[assembly: AssemblyCompany("Wes Day, Faqirsalik")]
 [assembly: AssemblyProduct("Serilog.Sinks.Kafka")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

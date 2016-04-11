@@ -9,7 +9,7 @@ namespace Serilog.Sinks.Kafka.Test
     using KafkaNet.Protocol;
     using Serilog;
     using Serilog.Events;
-
+    
     [TestClass]
     public class SerilogSinksKafkaTest
     {
@@ -21,7 +21,7 @@ namespace Serilog.Sinks.Kafka.Test
         [TestMethod]
         public void KafkaConnectionTest()
         {
-            var log = new LoggerConfiguration().WriteTo.Kafka("TopicName", "http://host1:9092", "http://host2:9092", LevelAlias.Minimum, 50, TimeSpan.FromMinutes(1)).CreateLogger();
+            var log = new LoggerConfiguration().WriteTo.Kafka("Sense_log", "http://vcld16rdacoas02.ual.com:9092", "http://vcld16rdacoas03.ual.com:9092", LevelAlias.Minimum, 50, TimeSpan.FromMinutes(1)).CreateLogger();
 
             log.Error("some error from application");
 

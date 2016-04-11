@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>Serilog.Sinks.Kafka</id>
+        <version>0.0.0.1</version>
+        <title>Serilog.Sinks.Kafka</title>
+        <authors>Wes Day, Faqirsalik</authors>
+        <owners>Wes Day</owners>
+        <projectUrl>https://github.com/NHaml/NHaml</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Serilog Kafka Sink</description>
+        <copyright>MIT License</copyright>
+        <language>en-US</language>
+    </metadata>
+    <files>
+        <file src="bin\Debug\System.Web.NHaml.dll" target="lib\net40\System.Web.NHaml.dll" />
+        <file src="bin\Debug\System.Web.NHaml.Mvc3.dll" target="lib\net40\System.Web.NHaml.Mvc3.dll" />
+    </files>
+</package>
