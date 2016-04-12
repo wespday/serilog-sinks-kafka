@@ -28,7 +28,7 @@ MSBuild.exe %SOLUTION% %MSBUILDARGS% /property:Configuration=Release %* || GOTO 
 
 @ECHO **** BUILDING Nuget ****
 %NUGET_COMMAND% pack %SRC%\Serilog.Sinks.Kafka\Serilog.Sinks.Kafka.csproj -Build -Symbols -Properties Configuration=Release  -Verbosity quiet
-%NUGET_COMMAND% push *.nupkg -s http://nuget.ual.com/packages
+%NUGET_COMMAND% push *.nupkg %NUGET_REPOSITORY_API_KEY% -s http://nuget.ual.com/packages
 GOTO:EOF
 
 :BuildFailed
