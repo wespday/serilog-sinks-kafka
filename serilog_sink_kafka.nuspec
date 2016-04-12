@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
-    <metadata>
+<package>
+  <metadata>
         <id>Serilog.Sinks.Kafka</id>
         <version>0.0.0.1</version>
         <title>Serilog.Sinks.Kafka</title>
@@ -12,8 +12,9 @@
         <copyright>MIT License</copyright>
         <language>en-US</language>
     </metadata>
-    <files>
-        <file src="bin\Debug\System.Web.NHaml.dll" target="lib\net40\System.Web.NHaml.dll" />
-        <file src="bin\Debug\System.Web.NHaml.Mvc3.dll" target="lib\net40\System.Web.NHaml.Mvc3.dll" />
-    </files>
+    <dependencies>
+		<dependency id="kafka-net" version="[0.9.0.49)" targetFramework="net45"/>
+		<dependency id="Serilog" version="[1.5.12)" targetFramework="net45"/>
+    </dependencies>
+  </metadata>
 </package>
