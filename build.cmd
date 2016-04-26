@@ -8,6 +8,9 @@
 @SET SOLUTION=%SRC%\Serilog.Sinks.Kafka.sln
 @SET MSBUILDARGS=/target:Rebuild /fileLogger /verbosity:minimal
 @SET NUGET_COMMAND=%SRC%\.nuget\nuget.exe
+@SET Month=%%A
+@SET DAY=%%B
+@SET Year=%%C
 
 @ECHO.
 @ECHO  **** CLEAN  ****
@@ -27,8 +30,11 @@ MSBuild.exe %SOLUTION% %MSBUILDARGS% /property:Configuration=Release %* || GOTO 
 @ECHO **** BUILD SUCCESSFUL ****
 
 @ECHO **** BUILDING Nuget ****
-%NUGET_COMMAND% pack %SRC%\Serilog.Sinks.Kafka\Serilog.Sinks.Kafka.csproj -Build -Symbols -Properties Configuration=Release  -Verbosity quiet
-%NUGET_COMMAND% push *.nupkg %NUGET_REPOSITORY_API_KEY% -s http://nuget.ual.com/packages
+@SET version=%DATE:~10,4%%DATE:~4,2%%DATE:~7,2%%TIME:~0,2%
+
+echo %version%
+%NUGET_COMMAND% pack %SRC%\Serilog.Sinks.Kafka\Serilog.Sinks.Kafka.csproj -Build -Symbols -Properties Configuration=Release -Version 1.0.%version% -Verbosity quiet
+%NUGET_COMMAND% push *.nupkg %NUGET_REPOSITORY_API_KEY% -source http://nuget.ual.com/packages
 GOTO:EOF
 
 :BuildFailed

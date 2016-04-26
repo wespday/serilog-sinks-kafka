@@ -4,7 +4,7 @@
         <id>Serilog.Sinks.Kafka</id>
         <version>0.0.0.1</version>
         <title>Serilog.Sinks.Kafka</title>
-        <authors>Wes Day, Faqirsalik</authors>
+        <authors>Wes Day, @Faqirsalik</authors>
         <owners>Wes Day</owners>
         <projectUrl>https://github.com/NHaml/NHaml</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
