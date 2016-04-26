@@ -30,10 +30,10 @@ MSBuild.exe %SOLUTION% %MSBUILDARGS% /property:Configuration=Release %* || GOTO 
 @ECHO **** BUILD SUCCESSFUL ****
 
 @ECHO **** BUILDING Nuget ****
-@SET version=%DATE:~10,4%%DATE:~4,2%%DATE:~7,2%%TIME:~0,2%
-
+@SET version=%DATE:~10,4%%DATE:~4,2%%DATE:~7,2%
+@SET subversion=%TIME:~0,2%%TIME:~3,2%%TIME:~6,2%
 echo %version%
-%NUGET_COMMAND% pack %SRC%\Serilog.Sinks.Kafka\Serilog.Sinks.Kafka.csproj -Build -Symbols -Properties Configuration=Release -Version 1.0.%version% -Verbosity quiet
+%NUGET_COMMAND% pack %SRC%\Serilog.Sinks.Kafka\Serilog.Sinks.Kafka.csproj -Build -Symbols -Properties Configuration=Release -Version 1.%version%.%subversion% -Verbosity quiet
 %NUGET_COMMAND% push *.nupkg %NUGET_REPOSITORY_API_KEY% -source http://nuget.ual.com/packages
 GOTO:EOF
 
