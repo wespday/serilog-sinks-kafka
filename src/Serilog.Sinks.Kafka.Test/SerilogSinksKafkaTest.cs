@@ -23,7 +23,7 @@ namespace Serilog.Sinks.Kafka.Test
         {
             var log = new LoggerConfiguration().WriteTo.Kafka("Sense_log", "http://vcld16rdacoas02.ual.com:9092", "http://vcld16rdacoas03.ual.com:9092", LevelAlias.Minimum, 50, TimeSpan.FromMinutes(1)).CreateLogger();
 
-            log.Error("some error from application");
+            log.Information("This is a test {message}", 3);
 
             Assert.AreEqual(true, true);
         }

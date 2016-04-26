@@ -24,6 +24,7 @@ namespace Serilog.Sinks.Kafka
     using System.Diagnostics;
     using System.Diagnostics.Contracts;
     using System.IO;
+    using System.Linq;
     using System.Threading.Tasks;
 
     using KafkaNet;
@@ -79,8 +80,10 @@ namespace Serilog.Sinks.Kafka
         protected override void EmitBatch(IEnumerable<LogEvent> events)
         {
             Contract.Assume(this.kafkaProducer != null);
-
-            this.kafkaProducer.SendMessageAsync(this.kafkaTopic, new[] { new Message(events.ToString()) }).Wait();
+            foreach (var logevent in events)
+            {
+                this.kafkaProducer.SendMessageAsync(this.kafkaTopic, new[] { new Message(logevent.RenderMessage()) }).Wait();    
+            }
         }
     }
 }
