@@ -19,6 +19,7 @@ namespace Serilog.Sinks.Kafka.Test
         }
 
         [TestMethod]
+        [TestCategory("Integration")]
         public void KafkaConnectionTest()
         {
             var log = new LoggerConfiguration().WriteTo.Kafka("Sense_log", "http://vcld16rdacoas02.ual.com:9092", "http://vcld16rdacoas03.ual.com:9092", LevelAlias.Minimum, 50, TimeSpan.FromMinutes(1)).CreateLogger();

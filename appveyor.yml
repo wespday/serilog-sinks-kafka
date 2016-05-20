@@ -1,0 +1,22 @@
+version: 1.5.{build}
+image: Visual Studio 2015
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}'
+build_script:
+- cmd: build.cmd
+test:
+  categories:
+    except:
+    - Integration
+    - Broken
+notifications:
+- provider: Slack
+  incoming_webhook: https://hooks.slack.com/services/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
+  channel: builds
+  on_build_success: true
+  on_build_failure: true
+  on_build_status_changed: false
