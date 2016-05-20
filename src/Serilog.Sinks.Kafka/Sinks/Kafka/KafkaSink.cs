@@ -1,13 +1,13 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="KafkaSink.cs" company="Wes Day">
-//   Copyright (c) 2015 Wes Day
-//   
+//   Copyright (c) 2016 Wes Day
+//
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
-//   
+//
 //          http://www.apache.org/licenses/LICENSE-2.0
-//   
+//
 //   Unless required by applicable law or agreed to in writing, software
 //   distributed under the License is distributed on an "AS IS" BASIS,
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,9 +20,8 @@ namespace Serilog.Sinks.Kafka
 {
     using System;
     using System.Collections.Generic;
-    using System.Configuration;
-    using System.Diagnostics;
     using System.Diagnostics.Contracts;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
@@ -34,17 +33,16 @@ namespace Serilog.Sinks.Kafka
     using PeriodicBatching;
 
     using Serilog.Events;
+    using Serilog.Formatting.Json;
 
     /// <summary>
     /// Writes log events as documents to Kafka.
     /// </summary>
     public class KafkaSink : PeriodicBatchingSink
     {
+        private readonly JsonFormatter jsonFormatter = new JsonFormatter();
         private readonly KafkaSinkOptions kafkaSinkOptions;
-
-        private Producer kafkaProducer;
-
-        private string kafkaTopic;
+        private readonly KafkaOptions kafkaOptions;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="KafkaSink"/> class.
@@ -52,38 +50,68 @@ namespace Serilog.Sinks.Kafka
         /// <param name="options">
         /// The configuration options.
         /// </param>
-        /// <param name="kafkaHostPrimary"> kafka host</param>
-        /// <param name="kafkaHostSecondary"> kafka host 2</param>
-        /// <param name="kafkaTopic">Kafka topic</param>
-        public KafkaSink(KafkaSinkOptions options, string kafkaHostPrimary, string kafkaHostSecondary, string kafkaTopic)
+        public KafkaSink(KafkaSinkOptions options)
             : base(options.BatchPostingLimit, options.Period)
         {
             Contract.Requires<ArgumentNullException>(options != null);
-            Contract.Requires(kafkaHostPrimary != null);
-            Contract.Requires(kafkaHostSecondary != null);
-            Contract.Requires(kafkaTopic != null);
 
             this.kafkaSinkOptions = options;
-            this.kafkaSinkOptions.BatchPostingLimit = 50;
-            this.kafkaSinkOptions.Period = TimeSpan.FromSeconds(5);
-
-            this.kafkaProducer = new Producer(new BrokerRouter(new KafkaOptions(new Uri(kafkaHostPrimary), new Uri(kafkaHostSecondary))));
-            this.kafkaTopic = kafkaTopic;
+            this.kafkaOptions = new KafkaOptions(this.kafkaSinkOptions.KafkaUris);
         }
 
         /// <summary>
-        /// Emit a batch of log events, running to completion synchronously.
+        /// Emit a batch of log events, running to completion asynchronously.
         /// </summary>
-        /// <param name="events">The events to emit.</param>
-        /// <remarks>Override either <see cref="PeriodicBatchingSink.EmitBatch"/> or <see cref="PeriodicBatchingSink.EmitBatchAsync"/>,
-        /// not both.</remarks>
-        protected override void EmitBatch(IEnumerable<LogEvent> events)
+        /// <param name="events">
+        /// The events to emit.
+        /// </param>
+        /// <remarks>
+        /// Override either <see cref="M:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink.EmitBatch(System.Collections.Generic.IEnumerable{Serilog.Events.LogEvent})"/>
+        ///  or <see cref="M:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink.EmitBatchAsync(System.Collections.Generic.IEnumerable{Serilog.Events.LogEvent})"/>,
+        /// not both.
+        /// </remarks>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        protected override async Task EmitBatchAsync(IEnumerable<LogEvent> events)
         {
-            Contract.Assume(this.kafkaProducer != null);
-            foreach (var logevent in events)
+            if (events == null)
             {
-                this.kafkaProducer.SendMessageAsync(this.kafkaTopic, new[] { new Message(logevent.RenderMessage()) }).Wait();    
+                return;
             }
+
+            var kafkaMessages = events.Select(this.CreateKafkaMessage);
+            await this.SendKafkaMessages(kafkaMessages).ConfigureAwait(false);
+        }
+
+        private async Task SendKafkaMessages(IEnumerable<Message> kafkaMessages)
+        {
+            using (var router = new BrokerRouter(this.kafkaOptions))
+            using (var kafkaClient = new Producer(router))
+            {
+                await kafkaClient.SendMessageAsync(this.kafkaSinkOptions.KafkaTopicName, kafkaMessages).ConfigureAwait(false);
+            }
+        }
+
+        private Message CreateKafkaMessage(LogEvent loggingEvent)
+        {
+            Contract.Requires<ArgumentNullException>(loggingEvent != null);
+            Contract.Ensures(Contract.Result<Message>() != null);
+
+            using (var eventText = new StringWriter(CultureInfo.InvariantCulture))
+            {
+                this.jsonFormatter.Format(loggingEvent, eventText);
+                var message = new Message(eventText.ToString());
+                return message;
+            }
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.jsonFormatter != null);
+            Contract.Invariant(this.kafkaSinkOptions != null);
+            Contract.Invariant(this.kafkaOptions != null);
         }
     }
 }

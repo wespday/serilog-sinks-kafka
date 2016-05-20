@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="LoggerConfigurationKafkaExtensions.cs" company="Wes Day">
-//   Copyright (c) 2015 Wes Day
+//   Copyright (c) 2016 Wes Day
 //   
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -19,10 +19,11 @@
 namespace Serilog
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics.Contracts;
+    using System.Linq;
 
     using Serilog.Configuration;
-    using Serilog.Events;
     using Serilog.Sinks.Kafka;
 
     /// <summary>
@@ -33,47 +34,35 @@ namespace Serilog
         /// <summary>
         /// Adds a sink that writes log events to kafka
         /// </summary>
-        /// <param name="loggerConfiguration">The logger configuration.</param>
-        /// <param name="topic">The topic where the log will be written to.</param>
-        /// <param name="kafkaHostPrimary">Kafka primary host.</param>
-        /// <param name="kafkaHostSecondary">Kafka secondary host.</param>
-        /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
-        /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
-        /// <param name="period">The time to wait between checking for event batches.</param>
-        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        /// <returns>Logger configuration, allowing configuration to continue.</returns>
-        /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
+        /// <param name="loggerConfiguration">
+        /// The logger configuration.
+        /// </param>
+        /// <param name="topic">
+        /// The topic where the log will be written to.
+        /// </param>
+        /// <param name="kafkaUris">
+        /// The kafka Uris.
+        /// </param>
+        /// <returns>
+        /// Logger configuration, allowing configuration to continue.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// A required parameter is null.
+        /// </exception>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Caller must dispose configuration")]
         public static LoggerConfiguration Kafka(
             this LoggerSinkConfiguration loggerConfiguration,
             string topic,
-            string kafkaHostPrimary,
-            string kafkaHostSecondary,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            int batchPostingLimit = 50,
-            TimeSpan? period = null,
-            IFormatProvider formatProvider = null)
+            ICollection<Uri> kafkaUris)
         {
-            Contract.Requires(kafkaHostPrimary != null);
-            Contract.Requires(kafkaHostSecondary != null);
-            Contract.Assume(period.HasValue);
+            Contract.Requires(loggerConfiguration != null);
+            Contract.Requires(!string.IsNullOrWhiteSpace(topic));
+            Contract.Requires(kafkaUris != null && kafkaUris.Any());
+            Contract.Ensures(Contract.Result<LoggerConfiguration>() != null);
 
-            if (loggerConfiguration == null)
-            {
-                throw new ArgumentNullException("loggerConfiguration");
-            }
-
-            if (topic == null)
-            {
-                throw new ArgumentNullException("topic");
-            }
-            
-            // var defaultedPeriod = period ?? MongoDBSink.DefaultPeriod;
-            return loggerConfiguration.Sink(
-                new KafkaSink(
-                    new KafkaSinkOptions() { BatchPostingLimit = batchPostingLimit, Period = period.Value == null ? TimeSpan.FromMinutes(1) : period.Value },
-                    kafkaHostPrimary,
-                    kafkaHostSecondary,
-                    topic));
+            var result = loggerConfiguration.Sink(new KafkaSink(new KafkaSinkOptions { KafkaUris = kafkaUris.ToArray(), KafkaTopicName = topic }));
+            Contract.Assume(result != null);
+            return result;
         }
     }
 }
