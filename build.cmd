@@ -34,7 +34,7 @@ MSBuild.exe %SOLUTION% %MSBUILDARGS% /property:Configuration=Release %* || GOTO 
 @SET subversion=%TIME:~0,2%%TIME:~3,2%%TIME:~6,2%
 echo %version%
 %NUGET_COMMAND% pack %SRC%\Serilog.Sinks.Kafka\Serilog.Sinks.Kafka.csproj -Build -Symbols -Properties Configuration=Release -Version 1.%version%.%subversion% -Verbosity quiet
-%NUGET_COMMAND% push *.nupkg %NUGET_REPOSITORY_API_KEY% -source http://nuget.ual.com/packages
+REM %NUGET_COMMAND% push *.nupkg %NUGET_REPOSITORY_API_KEY% -source http://nuget.ual.com/packages
 GOTO:EOF
 
 :BuildFailed
