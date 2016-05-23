@@ -23,27 +23,28 @@ IF "%PACKAGE_VERSION%"=="" (
 @SET NUGET_FRAMEWORK_FOLDER=%NUGET_PACKAGE_FOLDER%\lib\%DOTNET_FRAMEWORK%
 
 RMDIR /Q /S "%ARTIFACTS%" >nul 2>&1
-MKDIR "%ARTIFACTS%" ||  GOTO BuildFailed
+MKDIR "%ARTIFACTS%"
 
 "%NUGET_COMMAND%" restore "%SOLUTION%"  -Verbosity quiet ||  GOTO BuildFailed
 
 @ECHO.
 @ECHO  **** BUIILD DEBUG  ****
 MSBuild "%SOLUTION%" %MSBUILDARGS% ||  GOTO BuildFailed
-@COPY msbuild.log "%ARTIFACTS%\msbuild.DEBUG.log" ||  GOTO BuildFailed
+COPY msbuild.log "%ARTIFACTS%\msbuild.DEBUG.log" ||  GOTO BuildFailed
 
 @ECHO.
 @ECHO  **** BUIILD RELEASE  ****
 MSBuild "%SOLUTION%" %MSBUILDARGS% /property:Configuration=Release ||  GOTO BuildFailed
-@COPY msbuild.log "%ARTIFACTS%\msbuild.RELEASE.log" ||  GOTO BuildFailed
+COPY msbuild.log "%ARTIFACTS%\msbuild.RELEASE.log" ||  GOTO BuildFailed
 
 @ECHO.
 @ECHO  **** CREATE NUGET PACKAGE  ****
 MKDIR "%NUGET_FRAMEWORK_FOLDER%" ||  GOTO BuildFailed
-@COPY "%PROJECT_FOLDER%\bin\Release\%NUGET_PACKAGE_ID%.??l" "%NUGET_FRAMEWORK_FOLDER%\" ||  GOTO BuildFailed
-@COPY "%PROJECT_FOLDER%\bin\Release\%NUGET_PACKAGE_ID%.pdb" "%NUGET_FRAMEWORK_FOLDER%\" ||  GOTO BuildFailed
-@COPY "%PROJECT_FOLDER%\bin\Release\CodeContracts" "%NUGET_FRAMEWORK_FOLDER%\" ||  GOTO BuildFailed
-@COPY "%PROJECT_FOLDER%\bin\Release\%NUGET_PACKAGE_ID%.nuspec" "%NUGET_PACKAGE_FOLDER%\" ||  GOTO BuildFailed
+COPY "%PROJECT_FOLDER%\bin\Release\%NUGET_PACKAGE_ID%.??l" "%NUGET_FRAMEWORK_FOLDER%\" ||  GOTO BuildFailed
+COPY "%PROJECT_FOLDER%\bin\Release\%NUGET_PACKAGE_ID%.pdb" "%NUGET_FRAMEWORK_FOLDER%\" ||  GOTO BuildFailed
+MKDIR "%NUGET_FRAMEWORK_FOLDER%\CodeContracts\" ||  GOTO BuildFailed
+COPY "%PROJECT_FOLDER%\bin\Release\CodeContracts\*.*" "%NUGET_FRAMEWORK_FOLDER%\CodeContracts\" ||  GOTO BuildFailed
+COPY "%PROJECT_FOLDER%\bin\Release\%NUGET_PACKAGE_ID%.nuspec" "%NUGET_PACKAGE_FOLDER%\" ||  GOTO BuildFailed
 
 %NUGET_COMMAND% pack "%NUGET_PACKAGE_FOLDER%\%NUGET_PACKAGE_ID%.nuspec" -Version %PACKAGE_VERSION% ^
      -NonInteractive -OutputDirectory %ARTIFACTS% -Properties version=%PACKAGE_VERSION%||  GOTO BuildFailed
