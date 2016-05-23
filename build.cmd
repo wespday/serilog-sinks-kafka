@@ -4,9 +4,10 @@
 @ECHO.
 @ECHO  **** STARTING BUILD  ****
 
-@SET SRC=%~dp0\src
-@SET ARTIFACTS=%~dp0\artifacts
-@SET NUGET_COMMAND=%SRC%\.nuget\nuget.exe
+@SET THIS_SCRIPT_FOLDER=%~dp0
+CD "%THIS_SCRIPT_FOLDER%"
+@SET ARTIFACTS=artifacts
+@SET NUGET_COMMAND=src\.nuget\nuget.exe
 @SET PACKAGE_VERSION=%APPVEYOR_BUILD_VERSION%
 
 IF "%PACKAGE_VERSION%"=="" (
@@ -14,23 +15,27 @@ IF "%PACKAGE_VERSION%"=="" (
 )
 
 @SET NUGET_PACKAGE_ID=Serilog.Sinks.Kafka
-@SET SOLUTION=%SRC%\Serilog.Sinks.Kafka.sln
-@SET PROJECT_FOLDER=%SRC%\%NUGET_PACKAGE_ID%
+@SET SOLUTION=%THIS_SCRIPT_FOLDER%src\Serilog.Sinks.Kafka.sln
+@SET PROJECT_FOLDER=src\%NUGET_PACKAGE_ID%
 @SET MSBUILDARGS=/target:Rebuild /fileLogger /verbosity:minimal /ToolsVersion:14.0
 @SET NUGET_PACKAGE_FOLDER=%ARTIFACTS%\%NUGET_PACKAGE_ID%
 @SET DOTNET_FRAMEWORK=net40
 @SET NUGET_FRAMEWORK_FOLDER=%NUGET_PACKAGE_FOLDER%\lib\%DOTNET_FRAMEWORK%
 
 RMDIR /Q /S "%ARTIFACTS%" >nul 2>&1
-%NUGET_COMMAND% restore "%SOLUTION%"  -Verbosity quiet ||  GOTO BuildFailed
+MKDIR "%ARTIFACTS%" ||  GOTO BuildFailed
+
+"%NUGET_COMMAND%" restore "%SOLUTION%"  -Verbosity quiet ||  GOTO BuildFailed
 
 @ECHO.
 @ECHO  **** BUIILD DEBUG  ****
 MSBuild "%SOLUTION%" %MSBUILDARGS% ||  GOTO BuildFailed
+@COPY msbuild.log "%ARTIFACTS%\msbuild.DEBUG.log" ||  GOTO BuildFailed
 
 @ECHO.
 @ECHO  **** BUIILD RELEASE  ****
 MSBuild "%SOLUTION%" %MSBUILDARGS% /property:Configuration=Release ||  GOTO BuildFailed
+@COPY msbuild.log "%ARTIFACTS%\msbuild.RELEASE.log" ||  GOTO BuildFailed
 
 @ECHO.
 @ECHO  **** CREATE NUGET PACKAGE  ****
