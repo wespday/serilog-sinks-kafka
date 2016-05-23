@@ -588,4 +588,7 @@
     <Rule Id="C6995" Action="Error" />
     <Rule Id="C6997" Action="Error" />
   </Rules>
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.CSharp.Features" RuleNamespace="Microsoft.CodeAnalysis.CSharp.Features">
+    <Rule Id="IDE0001" Action="None" />
+  </Rules>
 </RuleSet>
