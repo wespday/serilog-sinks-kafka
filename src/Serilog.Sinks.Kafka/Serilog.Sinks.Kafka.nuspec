@@ -1,20 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
-<package>
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-        <id>Serilog.Sinks.Kafka</id>
-        <version>0.0.0.1</version>
-        <title>Serilog.Sinks.Kafka</title>
-        <authors>Wes Day, @Faqirsalik</authors>
-        <owners>Wes Day</owners>
-        <projectUrl>https://github.com/NHaml/NHaml</projectUrl>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Serilog Kafka Sink</description>
-        <copyright>MIT License</copyright>
-        <language>en-US</language>
-    </metadata>
-    <dependencies>
-		<dependency id="kafka-net" version="[0.9.0.49)" targetFramework="net45"/>
-		<dependency id="Serilog" version="[1.5.12)" targetFramework="net45"/>
-    </dependencies>
+    <id>Serilog.Sinks.Kafka</id>
+    <version>$version$</version>
+    <authors>Wes Day and Syed Ahmed</authors>
+    <owners>Wes Day</owners>
+    <description>Write structured logging events to a Kafka topic using Serilog in .NET</description>
+    <language>en-US</language>
+    <projectUrl>https://github.com/wespday/serilog-sinks-kafka/tree/master/src/Serilog.Sinks.Kafka</projectUrl>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <iconUrl>http://serilog.net/images/serilog-sink-nuget.png</iconUrl>
+    <tags>serilog logging kafka</tags>
   </metadata>
 </package>

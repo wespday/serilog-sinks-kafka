@@ -166,6 +166,9 @@
       <Link>stylecop.json</Link>
     </AdditionalFiles>
     <None Include="packages.config" />
+    <None Include="Serilog.Sinks.Kafka.nuspec">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\CustomDictionary\CustomDictionary.xml">

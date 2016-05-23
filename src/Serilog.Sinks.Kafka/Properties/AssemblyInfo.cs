@@ -29,7 +29,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Serilog.Sinks.Kafka")]
 [assembly: AssemblyDescription("Serilog Kafka Sinks")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Wes Day, Faqirsalik")]
+[assembly: AssemblyCompany("Wes Day")]
 [assembly: AssemblyProduct("Serilog.Sinks.Kafka")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
