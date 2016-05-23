@@ -3,13 +3,21 @@
   <metadata>
     <id>Serilog.Sinks.Kafka</id>
     <version>$version$</version>
-    <authors>Wes Day and Syed Ahmed</authors>
     <owners>Wes Day</owners>
+    <authors>Wes Day and Syed Ahmed</authors>
     <description>Write structured logging events to a Kafka topic using Serilog in .NET</description>
     <language>en-US</language>
-    <projectUrl>https://github.com/wespday/serilog-sinks-kafka/tree/master/src/Serilog.Sinks.Kafka</projectUrl>
-    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <projectUrl>https://github.com/wespday/serilog-sinks-kafka</projectUrl>
+    <licenseUrl>https://github.com/wespday/serilog-sinks-kafka/blob/master/LICENSE</licenseUrl>
+	<copyright>Copyright 2016 Wes Day. All rights reserved.</copyright>
     <iconUrl>http://serilog.net/images/serilog-sink-nuget.png</iconUrl>
     <tags>serilog logging kafka</tags>
+    <dependencies>
+      <dependency id="Serilog" version="[1.5,2)" />
+      <dependency id="kafka-net" version="[0.9,1)" />
+    </dependencies>
+    <references>
+      <reference file="Serilog.Sinks.Kafka.dll" />
+    </references>	
   </metadata>
 </package>
