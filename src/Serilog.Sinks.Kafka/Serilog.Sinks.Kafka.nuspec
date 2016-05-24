@@ -13,8 +13,8 @@
     <iconUrl>http://serilog.net/images/serilog-sink-nuget.png</iconUrl>
     <tags>serilog logging kafka</tags>
     <dependencies>
-      <dependency id="Serilog" version="[1.5,2)" />
-      <dependency id="kafka-net" version="[0.9,1)" />
+      <dependency id="Serilog" version="[1.5.14,2)" />
+      <dependency id="kafka-net" version="[0.9.0.65,1)" />
     </dependencies>
     <references>
       <reference file="Serilog.Sinks.Kafka.dll" />
