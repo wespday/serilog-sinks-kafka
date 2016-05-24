@@ -36,7 +36,7 @@ namespace Serilog.Sinks.Kafka.Test
         {
             var log = new LoggerConfiguration()
                 .WriteTo
-                .Kafka(topic: "test", brokers: new[] { new Uri("http://localhost:9092") })
+                .Kafka(new KafkaSinkOptions(topic: "test", brokers: new[] { new Uri("http://localhost:9092") }))
                 .CreateLogger();
 
             log.Information(

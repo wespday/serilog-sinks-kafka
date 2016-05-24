@@ -24,8 +24,19 @@ namespace Serilog.Sinks.Kafka
     /// <summary>
     /// The kafka sink options.
     /// </summary>
-    internal class KafkaSinkOptions
+    public class KafkaSinkOptions
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KafkaSinkOptions"/> class.
+        /// </summary>
+        /// <param name="topic">The Kafka topic to log to</param>
+        /// <param name="brokers">The Kafka broker endpionts to log to</param>
+        public KafkaSinkOptions(string topic, Uri[] brokers)
+        {
+            this.Topic = topic;
+            this.Brokers = brokers;
+        }
+
         /// <summary>
         /// Gets or sets the maximum number of events to post in a single batch.
         /// </summary>
@@ -37,14 +48,14 @@ namespace Serilog.Sinks.Kafka
         public TimeSpan Period { get; set; } = TimeSpan.FromSeconds(1);
 
         /// <summary>
-        /// Gets or sets a list of Kafka Broker URIs.
+        /// Gets a list of Kafka Broker URIs.
         /// </summary>
-        public Uri[] Brokers { get; set; } = new Uri[0];
+        public Uri[] Brokers { get; private set; }
 
         /// <summary>
-        /// Gets or sets the name of the Kafka queue to write to.
+        /// Gets the name of the Kafka queue to write to.
         /// </summary>
-        public string Topic { get; set; } = string.Empty;
+        public string Topic { get; private set; }
 
         [ContractInvariantMethod]
         private void ObjectInvariant()

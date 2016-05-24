@@ -17,9 +17,7 @@
 namespace Serilog
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics.Contracts;
-    using System.Linq;
 
     using Serilog.Configuration;
     using Serilog.Sinks.Kafka;
@@ -35,11 +33,8 @@ namespace Serilog
         /// <param name="loggerConfiguration">
         /// The logger configuration.
         /// </param>
-        /// <param name="topic">
-        /// The topic where the log will be written to.
-        /// </param>
-        /// <param name="brokers">
-        /// The kafka Uris.
+        /// <param name="options">
+        /// The <see cref="KafkaSinkOptions"/>.
         /// </param>
         /// <returns>
         /// Logger configuration, allowing configuration to continue.
@@ -50,15 +45,13 @@ namespace Serilog
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Caller must dispose configuration")]
         public static LoggerConfiguration Kafka(
             this LoggerSinkConfiguration loggerConfiguration,
-            string topic,
-            ICollection<Uri> brokers)
+            KafkaSinkOptions options)
         {
             Contract.Requires(loggerConfiguration != null);
-            Contract.Requires(!string.IsNullOrWhiteSpace(topic));
-            Contract.Requires(brokers != null && brokers.Any());
+            Contract.Requires(options != null);
             Contract.Ensures(Contract.Result<LoggerConfiguration>() != null);
 
-            var result = loggerConfiguration.Sink(new KafkaSink(new KafkaSinkOptions { Brokers = brokers.ToArray(), Topic = topic }));
+            var result = loggerConfiguration.Sink(new KafkaSink(options));
             Contract.Assume(result != null);
             return result;
         }
