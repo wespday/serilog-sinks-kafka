@@ -19,17 +19,17 @@ Create a logger and start logging messages:
     using System;
     using Serilog;
 
-    public void KafkaConnectionTest()
-    {
-        var log = new LoggerConfiguration()
-            .WriteTo
-            .Kafka(new KafkaSinkOptions(topic: "test", brokers: new[] { new Uri("http://localhost:9092") }))
-            .CreateLogger();
+public void KafkaConnectionTest()
+{
+    var log = new LoggerConfiguration()
+        .WriteTo
+        .Kafka(new KafkaSinkOptions(topic: "test", brokers: new[] { new Uri("http://localhost:9092") }))
+        .CreateLogger();
 
-        log.Information(
-            "The execution time of this test is  {@now}", 
-            new { DateTimeOffset.Now.Hour, DateTimeOffset.Now.Minute });
-    }
+    log.Information(
+        "The execution time of this test is  {@now}", 
+        new { DateTimeOffset.Now.Hour, DateTimeOffset.Now.Minute });
+}
 ```
 
 Publishes a message like this:
