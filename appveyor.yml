@@ -13,6 +13,9 @@ test:
     except:
     - Integration
     - Broken
+artifacts:
+- path: artifacts
+  name: artifacts
 notifications:
 - provider: Slack
   incoming_webhook: https://hooks.slack.com/services/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
