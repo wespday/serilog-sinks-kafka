@@ -29,8 +29,6 @@ Create a logger and start logging messages:
         log.Information(
             "The execution time of this test is  {@now}", 
             new { DateTimeOffset.Now.Hour, DateTimeOffset.Now.Minute });
-
-        Assert.IsTrue(true);
     }
 ```
 
