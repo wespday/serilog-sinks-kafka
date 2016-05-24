@@ -16,8 +16,8 @@ Install the **Serilog.Sinks.Kafka** NuGet package.
 Create a logger and start logging messages:
 
 ```csharp
-    using System;
-    using Serilog;
+using System;
+using Serilog;
 
 public void KafkaConnectionTest()
 {
