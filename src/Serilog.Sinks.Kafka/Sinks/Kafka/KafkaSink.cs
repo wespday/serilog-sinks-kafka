@@ -40,7 +40,7 @@ namespace Serilog.Sinks.Kafka
     /// </summary>
     internal class KafkaSink : PeriodicBatchingSink
     {
-        private readonly JsonFormatter jsonFormatter = new JsonFormatter();
+        private readonly JsonFormatter jsonFormatter;
         private readonly KafkaSinkOptions kafkaSinkOptions;
         private readonly KafkaOptions kafkaOptions;
 
@@ -57,6 +57,7 @@ namespace Serilog.Sinks.Kafka
 
             this.kafkaSinkOptions = options;
             this.kafkaOptions = new KafkaOptions(this.kafkaSinkOptions.Brokers);
+            this.jsonFormatter = new JsonFormatter(renderMessage: options.RenderSerilogMessage);
         }
 
         /// <summary>

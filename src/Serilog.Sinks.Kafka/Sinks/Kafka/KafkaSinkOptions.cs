@@ -57,6 +57,11 @@ namespace Serilog.Sinks.Kafka
         /// </summary>
         public string Topic { get; private set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether or not the Serilog message should be rendered.
+        /// </summary>
+        public bool RenderSerilogMessage { get; set; } = true;
+
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {

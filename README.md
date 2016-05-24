@@ -39,6 +39,7 @@ Publishes a message like this:
   "Timestamp": "2016-05-24T11:50:13.3539190-05:00",
   "Level": "Information",
   "MessageTemplate": "The execution time of this test is  {@now}",
+  "RenderedMessage": "The execution time of this test is  { Hour: 11, Minute: 50 }",
   "Properties": {
     "now": {
       "Hour": 11,
