@@ -38,7 +38,7 @@ namespace Serilog.Sinks.Kafka
     /// <summary>
     /// Writes log events as documents to Kafka.
     /// </summary>
-    public class KafkaSink : PeriodicBatchingSink
+    internal class KafkaSink : PeriodicBatchingSink
     {
         private readonly JsonFormatter jsonFormatter = new JsonFormatter();
         private readonly KafkaSinkOptions kafkaSinkOptions;
@@ -56,7 +56,7 @@ namespace Serilog.Sinks.Kafka
             Contract.Requires<ArgumentNullException>(options != null);
 
             this.kafkaSinkOptions = options;
-            this.kafkaOptions = new KafkaOptions(this.kafkaSinkOptions.KafkaUris);
+            this.kafkaOptions = new KafkaOptions(this.kafkaSinkOptions.Brokers);
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace Serilog.Sinks.Kafka
             using (var router = new BrokerRouter(this.kafkaOptions))
             using (var kafkaClient = new Producer(router))
             {
-                await kafkaClient.SendMessageAsync(this.kafkaSinkOptions.KafkaTopicName, kafkaMessages).ConfigureAwait(false);
+                await kafkaClient.SendMessageAsync(this.kafkaSinkOptions.Topic, kafkaMessages).ConfigureAwait(false);
             }
         }
 

@@ -38,7 +38,7 @@ namespace Serilog
         /// <param name="topic">
         /// The topic where the log will be written to.
         /// </param>
-        /// <param name="kafkaUris">
+        /// <param name="brokers">
         /// The kafka Uris.
         /// </param>
         /// <returns>
@@ -51,14 +51,14 @@ namespace Serilog
         public static LoggerConfiguration Kafka(
             this LoggerSinkConfiguration loggerConfiguration,
             string topic,
-            ICollection<Uri> kafkaUris)
+            ICollection<Uri> brokers)
         {
             Contract.Requires(loggerConfiguration != null);
             Contract.Requires(!string.IsNullOrWhiteSpace(topic));
-            Contract.Requires(kafkaUris != null && kafkaUris.Any());
+            Contract.Requires(brokers != null && brokers.Any());
             Contract.Ensures(Contract.Result<LoggerConfiguration>() != null);
 
-            var result = loggerConfiguration.Sink(new KafkaSink(new KafkaSinkOptions { KafkaUris = kafkaUris.ToArray(), KafkaTopicName = topic }));
+            var result = loggerConfiguration.Sink(new KafkaSink(new KafkaSinkOptions { Brokers = brokers.ToArray(), Topic = topic }));
             Contract.Assume(result != null);
             return result;
         }

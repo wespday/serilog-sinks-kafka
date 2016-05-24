@@ -34,25 +34,16 @@ namespace Serilog.Sinks.Kafka.Test
         [TestCategory("Integration")]
         public void KafkaConnectionTest()
         {
-            const string KafkaLoggingTopic = "test";
-
-            var kafkaEndpoints = new[]
-            {
-                new Uri("http://vcld16rdcsldb06:9092"),
-                new Uri("http://vcld16rdcsldb07:9092"),
-                new Uri("http://vcld16rdcsldb08:9092")
-            };
-
             var log = new LoggerConfiguration()
-                .Enrich.WithMachineName()
-                .Enrich.WithProcessId()
-                .Enrich.WithThreadId()
-                .Enrich.WithEnvironmentUserName()
-                .WriteTo.Kafka(KafkaLoggingTopic, kafkaEndpoints)
+                .WriteTo
+                .Kafka(topic: "test", brokers: new[] { new Uri("http://localhost:9092") })
                 .CreateLogger();
 
-            log.Information("This is a test {message}", DateTime.Now.Ticks);
-            Assert.AreEqual(true, true);
+            log.Information(
+                "The execution time of this test is  {@now}", 
+                new { DateTimeOffset.Now.Hour, DateTimeOffset.Now.Minute });
+
+            Assert.IsTrue(true);
         }
     }
 }
