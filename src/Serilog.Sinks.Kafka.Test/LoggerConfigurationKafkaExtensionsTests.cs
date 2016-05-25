@@ -40,10 +40,31 @@ namespace Serilog.Sinks.Kafka.Test
                 .CreateLogger();
 
             log.Information(
-                "The execution time of this test is  {@now}", 
+                "The execution time of this test is  {@now}",
                 new { DateTimeOffset.Now.Hour, DateTimeOffset.Now.Minute });
 
             Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        [TestCategory("Unit")]
+        public void CanCreateKafkaSink()
+        {
+            // Given
+            const string Topic = "SomeKafkaTopic";
+
+            var brokers = new[]
+            {
+                new Uri("http://localhost:3333"),
+                new Uri("http://localhost:4444"),
+                new Uri("http://localhost:5555")
+            };
+
+            // When 
+            var log = new LoggerConfiguration().WriteTo.Kafka(new KafkaSinkOptions(Topic, brokers));
+
+            // Then
+            Assert.IsNotNull(log);
         }
     }
 }
