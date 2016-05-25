@@ -44,7 +44,7 @@ IF "%APPVEYOR_BUILD_VERSION%"=="" (
 	@ECHO.
 	@ECHO  **** UNIT TEST ****
 	mstest /nologo /category:unit ^
-	/testcontainer:src\Serilog.Sinks.Kafka.Test\bin\Debug\Serilog.Sinks.Kafka.Tests.dll ^
+	/testcontainer:src\Serilog.Sinks.Kafka.Tests\bin\Debug\Serilog.Sinks.Kafka.Tests.dll ^
 	||  GOTO BuildFailed
 )
 
