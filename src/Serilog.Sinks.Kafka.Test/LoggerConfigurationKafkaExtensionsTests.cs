@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SerilogSinksKafkaTest.cs" company="Wes Day">
+// <copyright file="LoggerConfigurationKafkaExtensionsTests.cs" company="Wes Day">
 //   Copyright (c) 2016 Wes Day
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,7 @@ namespace Serilog.Sinks.Kafka.Test
     using Serilog;
 
     [TestClass]
-    public class SerilogSinksKafkaTest
+    public class LoggerConfigurationKafkaExtensionsTests
     {
         [TestMethod]
         [TestCategory("Integration")]

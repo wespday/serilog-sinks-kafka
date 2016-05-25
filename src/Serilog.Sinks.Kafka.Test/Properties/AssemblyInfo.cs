@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Serilog.Sinks.Kafka.Test")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Was Day, Faqirsalik")]
+[assembly: AssemblyCompany("Was Day")]
 [assembly: AssemblyProduct("Serilog.Sinks.Kafka.Test")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
