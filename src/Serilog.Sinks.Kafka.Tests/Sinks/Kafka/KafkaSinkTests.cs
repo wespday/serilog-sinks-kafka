@@ -17,9 +17,19 @@
 namespace Serilog.Sinks.Kafka.Tests.Sinks.Kafka
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
 
+    using KafkaNet.Model;
+    using KafkaNet.Protocol;
+
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using NSubstitute;
+
+    using Ploeh.AutoFixture;
+    using Ploeh.AutoFixture.AutoNSubstitute;
 
     using Serilog.Events;
 
@@ -42,6 +52,44 @@ namespace Serilog.Sinks.Kafka.Tests.Sinks.Kafka
             // Then
             Assert.IsTrue(result.IsCompleted);
             Assert.IsFalse(result.IsFaulted);
+        }
+
+        [TestMethod]
+        [TestCategory("Unit")]
+        public async Task CanSendSingleMessageBatch()
+        {
+            // Given
+            var testFixture = new Fixture().Customize(new AutoNSubstituteCustomization());
+            var kafkaClient = testFixture.Freeze<AbstractKafkaClient>();
+            var logEvents = testFixture.CreateMany<LogEvent>(1).ToArray();
+            var systemUnderTest = testFixture.Create<KafkaSink>();
+
+            // When 
+            await systemUnderTest.EmitBatchInternalAsync(logEvents).ConfigureAwait(false);
+
+            // Then
+            kafkaClient
+                .Received(1)
+                .SendMessagesAsync(Arg.Is<ICollection<Message>>(val => val.Count == logEvents.Length), Arg.Any<string>(), Arg.Any<KafkaOptions>());
+        }
+
+        [TestMethod]
+        [TestCategory("Unit")]
+        public async Task CanSendMultipleMessageBatch()
+        {
+            // Given
+            var testFixture = new Fixture().Customize(new AutoNSubstituteCustomization());
+            var kafkaClient = testFixture.Freeze<AbstractKafkaClient>();
+            var logEvents = testFixture.CreateMany<LogEvent>().ToArray();
+            var systemUnderTest = testFixture.Create<KafkaSink>();
+
+            // When 
+            await systemUnderTest.EmitBatchInternalAsync(logEvents).ConfigureAwait(false);
+
+            // Then
+            kafkaClient
+                .Received(1)
+                .SendMessagesAsync(Arg.Is<ICollection<Message>>(val => val.Count == logEvents.Length), Arg.Any<string>(), Arg.Any<KafkaOptions>());
         }
     }
 }

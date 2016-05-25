@@ -26,10 +26,13 @@ namespace Serilog.Sinks.Kafka
     using KafkaNet.Model;
     using KafkaNet.Protocol;
 
-    internal class KafkaClient
+    internal class KafkaClient : AbstractKafkaClient
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "To be made virtual for testing purposes")]
-        internal async Task SendMessagesAsync(ICollection<Message> kafkaMessages, string kafkaTopic, KafkaOptions kafkaOptions)
+    }
+
+    internal abstract class AbstractKafkaClient
+    {
+        internal virtual async Task SendMessagesAsync(ICollection<Message> kafkaMessages, string kafkaTopic, KafkaOptions kafkaOptions)
         {
             Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(kafkaTopic));
             Contract.Requires<ArgumentException>(kafkaMessages != null && kafkaMessages.Any());

@@ -58,3 +58,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: CLSCompliant(true)]
 [assembly: InternalsVisibleTo("Serilog.Sinks.Kafka.Tests")]
+
+// Make the internals visible to test mock generators
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]

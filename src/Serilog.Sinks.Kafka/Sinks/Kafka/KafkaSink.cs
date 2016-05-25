@@ -42,7 +42,7 @@ namespace Serilog.Sinks.Kafka
         private readonly JsonFormatter jsonFormatter;
         private readonly KafkaSinkOptions kafkaSinkOptions;
         private readonly KafkaOptions kafkaOptions;
-        private readonly KafkaClient kafkaClient;
+        private readonly AbstractKafkaClient kafkaClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="KafkaSink"/> class.
@@ -53,7 +53,7 @@ namespace Serilog.Sinks.Kafka
         /// <param name="options">
         /// The configuration options.
         /// </param>
-        public KafkaSink(KafkaClient kafkaClient, KafkaSinkOptions options)
+        public KafkaSink(AbstractKafkaClient kafkaClient, KafkaSinkOptions options)
             : base(options.BatchPostingLimit, options.Period)
         {
             Contract.Requires<ArgumentNullException>(options != null);
