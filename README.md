@@ -49,5 +49,5 @@ Publishes a message like this:
 }
 ```
 ## TODO
--Test with [ELK](https://www.elastic.co/webinars/introduction-elk-stack) stack  
--Support Durable Store and Forward Messaging
+* Test with [ELK](https://www.elastic.co/webinars/introduction-elk-stack) stack
+* Support durable store-and-forward messaging
