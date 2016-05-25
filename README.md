@@ -16,7 +16,7 @@ This sink delivers the data to Apache Kafka which is a publish-subscribe messagi
 
 ## Quick start
 
-Install the **Serilog.Sinks.Kafka** NuGet package.
+Install the [Serilog.Sinks.Kafka](https://www.nuget.org/packages/Serilog.Sinks.Kafka) NuGet package.
 
 Create a logger and start logging messages:
 
