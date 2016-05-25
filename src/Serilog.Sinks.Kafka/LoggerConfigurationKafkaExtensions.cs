@@ -51,7 +51,7 @@ namespace Serilog
             Contract.Requires(options != null);
             Contract.Ensures(Contract.Result<LoggerConfiguration>() != null);
 
-            var result = loggerConfiguration.Sink(new KafkaSink(options));
+            var result = loggerConfiguration.Sink(new KafkaSink(new KafkaClient(), options));
             Contract.Assume(result != null);
             return result;
         }

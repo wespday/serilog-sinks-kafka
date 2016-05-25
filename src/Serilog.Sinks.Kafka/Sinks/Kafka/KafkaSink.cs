@@ -26,7 +26,6 @@ namespace Serilog.Sinks.Kafka
     using System.Linq;
     using System.Threading.Tasks;
 
-    using KafkaNet;
     using KafkaNet.Model;
     using KafkaNet.Protocol;
 
@@ -43,21 +42,40 @@ namespace Serilog.Sinks.Kafka
         private readonly JsonFormatter jsonFormatter;
         private readonly KafkaSinkOptions kafkaSinkOptions;
         private readonly KafkaOptions kafkaOptions;
+        private readonly KafkaClient kafkaClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="KafkaSink"/> class.
         /// </summary>
+        /// <param name="kafkaClient">
+        /// The kafka Client.
+        /// </param>
         /// <param name="options">
         /// The configuration options.
         /// </param>
-        public KafkaSink(KafkaSinkOptions options)
+        public KafkaSink(KafkaClient kafkaClient, KafkaSinkOptions options)
             : base(options.BatchPostingLimit, options.Period)
         {
             Contract.Requires<ArgumentNullException>(options != null);
+            Contract.Requires<ArgumentNullException>(kafkaClient != null);
 
             this.kafkaSinkOptions = options;
+            this.kafkaClient = kafkaClient;
             this.kafkaOptions = new KafkaOptions(this.kafkaSinkOptions.Brokers);
             this.jsonFormatter = new JsonFormatter(renderMessage: options.RenderSerilogMessage);
+        }
+
+        internal async Task EmitBatchInternalAsync(ICollection<LogEvent> events)
+        {
+            Contract.Requires<ArgumentNullException>(events != null);
+
+            if (!events.Any())
+            {
+                return;
+            }
+
+            var kafkaMessages = events.Select(this.CreateKafkaMessage).ToArray();
+            await this.kafkaClient.SendMessagesAsync(kafkaMessages, this.kafkaSinkOptions.Topic, this.kafkaOptions).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -81,17 +99,7 @@ namespace Serilog.Sinks.Kafka
                 return;
             }
 
-            var kafkaMessages = events.Select(this.CreateKafkaMessage);
-            await this.SendKafkaMessages(kafkaMessages).ConfigureAwait(false);
-        }
-
-        private async Task SendKafkaMessages(IEnumerable<Message> kafkaMessages)
-        {
-            using (var router = new BrokerRouter(this.kafkaOptions))
-            using (var kafkaClient = new Producer(router))
-            {
-                await kafkaClient.SendMessageAsync(this.kafkaSinkOptions.Topic, kafkaMessages).ConfigureAwait(false);
-            }
+            await this.EmitBatchInternalAsync(events.ToArray()).ConfigureAwait(false);
         }
 
         private Message CreateKafkaMessage(LogEvent loggingEvent)

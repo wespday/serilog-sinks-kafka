@@ -12,6 +12,10 @@ CD "%THIS_SCRIPT_FOLDER%"
 @SET NUGET_COMMAND=src\.nuget\nuget.exe
 @SET PACKAGE_VERSION=%APPVEYOR_BUILD_VERSION%
 
+IF NOT "%APPVEYOR_BUILD_VERSION%"=="" (
+	SET RUNNING_ON_BUILD_SERVER="TRUE"
+)
+
 IF "%PACKAGE_VERSION%"=="" (
 	SET PACKAGE_VERSION=0.0.1
 )
@@ -21,10 +25,11 @@ SET PRERELEASE_PACKAGE_VERSION=%PACKAGE_VERSION%-prerelease
 @SET NUGET_PACKAGE_ID=Serilog.Sinks.Kafka
 @SET SOLUTION=%THIS_SCRIPT_FOLDER%src\Serilog.Sinks.Kafka.sln
 @SET PROJECT_FOLDER=src\%NUGET_PACKAGE_ID%
-@SET MSBUILDARGS=/target:Rebuild /fileLogger /verbosity:minimal /ToolsVersion:14.0
 @SET NUGET_PACKAGE_FOLDER=%ARTIFACTS%\%NUGET_PACKAGE_ID%
 @SET DOTNET_FRAMEWORK=net45
 @SET NUGET_FRAMEWORK_FOLDER=%NUGET_PACKAGE_FOLDER%\lib\%DOTNET_FRAMEWORK%
+@SET MSBUILDARGS=/target:Rebuild /fileLogger /verbosity:minimal /ToolsVersion:14.0 ^
+	/property:WarningLevel=4;TreatWarningsAsErrors=True;GenerateFullPaths=true
 
 @ECHO  **** CLEAN  ****
 RMDIR /Q /S "%ARTIFACTS%" >nul 2>&1
@@ -40,7 +45,8 @@ MSBuild "%SOLUTION%" /target:Clean /verbosity:minimal ||  GOTO BuildFailed
 MSBuild "%SOLUTION%" %MSBUILDARGS% ||  GOTO BuildFailed
 COPY msbuild.log "%ARTIFACTS%\msbuild.DEBUG.log" ||  GOTO BuildFailed
 
-IF "%APPVEYOR_BUILD_VERSION%"=="" (
+REM AppVeyor is set to automatically run tests
+IF NOT "%RUNNING_ON_BUILD_SERVER%"=="TRUE" (
 	@ECHO.
 	@ECHO  **** UNIT TEST ****
 	mstest /nologo /category:unit ^
