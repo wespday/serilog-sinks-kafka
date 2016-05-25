@@ -26,8 +26,10 @@ SET PRERELEASE_PACKAGE_VERSION=%PACKAGE_VERSION%-prerelease
 @SET DOTNET_FRAMEWORK=net45
 @SET NUGET_FRAMEWORK_FOLDER=%NUGET_PACKAGE_FOLDER%\lib\%DOTNET_FRAMEWORK%
 
+@ECHO  **** CLEAN  ****
 RMDIR /Q /S "%ARTIFACTS%" >nul 2>&1
 MKDIR "%ARTIFACTS%"
+MSBuild "%SOLUTION%" /target:Clean /verbosity:minimal ||  GOTO BuildFailed
 
 @ECHO.
 @ECHO  **** RESTORE NUGET PACKAGES  ****
@@ -42,7 +44,8 @@ IF "%APPVEYOR_BUILD_VERSION%"=="" (
 	@ECHO.
 	@ECHO  **** UNIT TEST ****
 	mstest /nologo /category:unit ^
-	/testcontainer:src\Serilog.Sinks.Kafka.Test\bin\Debug\Serilog.Sinks.Kafka.Test.dll
+	/testcontainer:src\Serilog.Sinks.Kafka.Test\bin\Debug\Serilog.Sinks.Kafka.Tests.dll ^
+	||  GOTO BuildFailed
 )
 
 @ECHO.

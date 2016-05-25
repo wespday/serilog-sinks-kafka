@@ -19,7 +19,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Serilog.Sinks.Kafka.Test
+namespace Serilog.Sinks.Kafka.Tests
 {
     using System;
 

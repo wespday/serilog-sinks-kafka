@@ -6,8 +6,8 @@
     <ProjectGuid>{0F16414D-933C-429F-80A2-CBE7579E81E2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Serilog.Sinks.Kafka.Test</RootNamespace>
-    <AssemblyName>Serilog.Sinks.Kafka.Test</AssemblyName>
+    <RootNamespace>Serilog.Sinks.Kafka.Tests</RootNamespace>
+    <AssemblyName>Serilog.Sinks.Kafka.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>

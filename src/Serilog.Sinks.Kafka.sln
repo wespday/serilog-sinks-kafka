@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Kafka", "Serilog.Sinks.Kafka\Serilog.Sinks.Kafka.csproj", "{DA1920B5-0882-4F96-B00F-935DD0B69ADC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Kafka.Test", "Serilog.Sinks.Kafka.Test\Serilog.Sinks.Kafka.Test.csproj", "{0F16414D-933C-429F-80A2-CBE7579E81E2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Kafka.Tests", "Serilog.Sinks.Kafka.Test\Serilog.Sinks.Kafka.Tests.csproj", "{0F16414D-933C-429F-80A2-CBE7579E81E2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{FAC957EF-C803-4492-AB4E-E3243E3E5947}"
 	ProjectSection(SolutionItems) = preProject
