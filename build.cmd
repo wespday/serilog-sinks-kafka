@@ -32,9 +32,8 @@ SET PRERELEASE_PACKAGE_VERSION=%PACKAGE_VERSION%-prerelease
 	/property:WarningLevel=4;TreatWarningsAsErrors=True;GenerateFullPaths=true
 
 @ECHO  **** CLEAN  ****
-RMDIR /Q /S "%ARTIFACTS%" >nul 2>&1
-MKDIR "%ARTIFACTS%"
 MSBuild "%SOLUTION%" /target:Clean /verbosity:minimal ||  GOTO BuildFailed
+RMDIR /Q /S "%ARTIFACTS%" >nul 2>&1
 
 @ECHO.
 @ECHO  **** RESTORE NUGET PACKAGES  ****
@@ -43,6 +42,7 @@ MSBuild "%SOLUTION%" /target:Clean /verbosity:minimal ||  GOTO BuildFailed
 @ECHO.
 @ECHO  **** BUIILD DEBUG  ****
 MSBuild "%SOLUTION%" %MSBUILDARGS% ||  GOTO BuildFailed
+MKDIR "%ARTIFACTS%"
 COPY msbuild.log "%ARTIFACTS%\msbuild.DEBUG.log" ||  GOTO BuildFailed
 
 REM AppVeyor is set to automatically run tests
@@ -71,12 +71,12 @@ COPY "%PROJECT_FOLDER%\bin\Release\%NUGET_PACKAGE_ID%.nuspec" "%NUGET_PACKAGE_FO
 @ECHO.
 @ECHO  **** CREATE PRE-RELEASE NUGET PACKAGE ****
 %NUGET_COMMAND% pack "%NUGET_PACKAGE_FOLDER%\%NUGET_PACKAGE_ID%.nuspec" -Version %PRERELEASE_PACKAGE_VERSION% ^
-     -NonInteractive -OutputDirectory %ARTIFACTS% -Properties version=%PACKAGE_VERSION%||  GOTO BuildFailed
+     -NonInteractive -OutputDirectory %ARTIFACTS% ||  GOTO BuildFailed
 
 @ECHO.
 @ECHO  **** CREATE RELEASE NUGET PACKAGE ****
 %NUGET_COMMAND% pack "%NUGET_PACKAGE_FOLDER%\%NUGET_PACKAGE_ID%.nuspec" -Version %PACKAGE_VERSION% ^
-     -NonInteractive -OutputDirectory %ARTIFACTS% -Properties version=%PACKAGE_VERSION%||  GOTO BuildFailed
+     -NonInteractive -OutputDirectory %ARTIFACTS% ||  GOTO BuildFailed
 
  
 @ECHO.
