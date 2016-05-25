@@ -36,6 +36,13 @@ MKDIR "%ARTIFACTS%"
 MSBuild "%SOLUTION%" %MSBUILDARGS% ||  GOTO BuildFailed
 COPY msbuild.log "%ARTIFACTS%\msbuild.DEBUG.log" ||  GOTO BuildFailed
 
+IF "%APPVEYOR_BUILD_VERSION%"=="" (
+	@ECHO.
+	@ECHO  **** UNIT TEST ****
+	mstest /nologo /category:unit ^
+	/testcontainer:src\Serilog.Sinks.Kafka.Test\bin\Debug\Serilog.Sinks.Kafka.Test.dll
+)
+
 @ECHO.
 @ECHO  **** BUIILD RELEASE  ****
 MSBuild "%SOLUTION%" %MSBUILDARGS% /property:Configuration=Release ||  GOTO BuildFailed
