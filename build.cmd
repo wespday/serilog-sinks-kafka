@@ -4,6 +4,8 @@
 @ECHO.
 @ECHO  **** STARTING BUILD  ****
 
+CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\Tools\VsDevCmd.bat"
+
 @SET THIS_SCRIPT_FOLDER=%~dp0
 CD "%THIS_SCRIPT_FOLDER%"
 @SET ARTIFACTS=artifacts
