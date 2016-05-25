@@ -1,9 +1,9 @@
 # Serilog.Sinks.Kafka
 A [Serilog](http://serilog.net/) [sink](https://github.com/serilog/serilog/wiki/Provided-Sinks) that writes events to [Kafka](http://kafka.apache.org/).
 
-[![Build status](https://ci.appveyor.com/api/projects/status/34ja7i5rnveewjq8?svg=true)](https://ci.appveyor.com/project/wespday/serilog-sinks-kafka)
-
 [![NuGet Badge](https://buildstats.info/nuget/Serilog.Sinks.Kafka?includePreReleases=true)](https://www.nuget.org/packages/Serilog.Sinks.Kafka/)
+
+[![Build status](https://ci.appveyor.com/api/projects/status/34ja7i5rnveewjq8?svg=true)](https://ci.appveyor.com/project/wespday/serilog-sinks-kafka)
 
 [![Build history](https://buildstats.info/appveyor/chart/wespday/serilog-sinks-kafka)](https://ci.appveyor.com/project/wespday/serilog-sinks-kafka/history)
 
