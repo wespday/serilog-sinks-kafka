@@ -48,3 +48,6 @@ Publishes a message like this:
   }
 }
 ```
+## TODO
+-Test with [ELK](https://www.elastic.co/products) stack  
+-Support Durable Store and Forward Messaging
