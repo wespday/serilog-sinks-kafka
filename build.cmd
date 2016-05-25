@@ -11,8 +11,10 @@ CD "%THIS_SCRIPT_FOLDER%"
 @SET PACKAGE_VERSION=%APPVEYOR_BUILD_VERSION%
 
 IF "%PACKAGE_VERSION%"=="" (
-	SET PACKAGE_VERSION=2.0.0-pre%DATE:~10,4%%DATE:~4,2%%DATE:~7,2%%TIME:~0,2%%TIME:~3,2%%TIME:~6,2%
+	SET PACKAGE_VERSION=0.0.1
 )
+
+SET PRERELEASE_PACKAGE_VERSION=%PACKAGE_VERSION%-prerelease
 
 @SET NUGET_PACKAGE_ID=Serilog.Sinks.Kafka
 @SET SOLUTION=%THIS_SCRIPT_FOLDER%src\Serilog.Sinks.Kafka.sln
@@ -25,6 +27,8 @@ IF "%PACKAGE_VERSION%"=="" (
 RMDIR /Q /S "%ARTIFACTS%" >nul 2>&1
 MKDIR "%ARTIFACTS%"
 
+@ECHO.
+@ECHO  **** RESTORE NUGET PACKAGES  ****
 "%NUGET_COMMAND%" restore "%SOLUTION%"  -Verbosity quiet ||  GOTO BuildFailed
 
 @ECHO.
@@ -38,7 +42,7 @@ MSBuild "%SOLUTION%" %MSBUILDARGS% /property:Configuration=Release ||  GOTO Buil
 COPY msbuild.log "%ARTIFACTS%\msbuild.RELEASE.log" ||  GOTO BuildFailed
 
 @ECHO.
-@ECHO  **** CREATE NUGET PACKAGE  ****
+@ECHO  **** STAGE NUGET PACKAGE FOLDER ****
 MKDIR "%NUGET_FRAMEWORK_FOLDER%" ||  GOTO BuildFailed
 COPY "%PROJECT_FOLDER%\bin\Release\%NUGET_PACKAGE_ID%.??l" "%NUGET_FRAMEWORK_FOLDER%\" ||  GOTO BuildFailed
 COPY "%PROJECT_FOLDER%\bin\Release\%NUGET_PACKAGE_ID%.pdb" "%NUGET_FRAMEWORK_FOLDER%\" ||  GOTO BuildFailed
@@ -46,9 +50,17 @@ MKDIR "%NUGET_FRAMEWORK_FOLDER%\CodeContracts\" ||  GOTO BuildFailed
 COPY "%PROJECT_FOLDER%\bin\Release\CodeContracts\*.*" "%NUGET_FRAMEWORK_FOLDER%\CodeContracts\" ||  GOTO BuildFailed
 COPY "%PROJECT_FOLDER%\bin\Release\%NUGET_PACKAGE_ID%.nuspec" "%NUGET_PACKAGE_FOLDER%\" ||  GOTO BuildFailed
 
+@ECHO.
+@ECHO  **** CREATE PRERELEASE NUGET PACKAGE ****
+%NUGET_COMMAND% pack "%NUGET_PACKAGE_FOLDER%\%NUGET_PACKAGE_ID%.nuspec" -Version %PRERELEASE_PACKAGE_VERSION% ^
+     -NonInteractive -OutputDirectory %ARTIFACTS% -Properties version=%PACKAGE_VERSION%||  GOTO BuildFailed
+
+@ECHO.
+@ECHO  **** CREATE RELEASE NUGET PACKAGE ****
 %NUGET_COMMAND% pack "%NUGET_PACKAGE_FOLDER%\%NUGET_PACKAGE_ID%.nuspec" -Version %PACKAGE_VERSION% ^
      -NonInteractive -OutputDirectory %ARTIFACTS% -Properties version=%PACKAGE_VERSION%||  GOTO BuildFailed
 
+ 
 @ECHO.
 @ECHO **** BUILD SUCCESSFUL ****
 GOTO:EOF
