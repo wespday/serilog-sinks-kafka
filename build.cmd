@@ -12,8 +12,10 @@ CD "%THIS_SCRIPT_FOLDER%"
 @SET NUGET_COMMAND=src\.nuget\nuget.exe
 @SET PACKAGE_VERSION=%APPVEYOR_BUILD_VERSION%
 
+
 IF NOT "%APPVEYOR_BUILD_VERSION%"=="" (
 	SET RUNNING_ON_BUILD_SERVER="TRUE"
+	SET COMMIT_ID=%APPVEYOR_REPO_COMMIT:~0,7%
 )
 
 IF "%PACKAGE_VERSION%"=="" (
@@ -71,12 +73,12 @@ COPY "%PROJECT_FOLDER%\bin\Release\%NUGET_PACKAGE_ID%.nuspec" "%NUGET_PACKAGE_FO
 @ECHO.
 @ECHO  **** CREATE PRE-RELEASE NUGET PACKAGE ****
 %NUGET_COMMAND% pack "%NUGET_PACKAGE_FOLDER%\%NUGET_PACKAGE_ID%.nuspec" -Version %PRERELEASE_PACKAGE_VERSION% ^
-     -NonInteractive -OutputDirectory %ARTIFACTS% ||  GOTO BuildFailed
+     -NonInteractive -OutputDirectory %ARTIFACTS% -Properties "commit_id=%COMMIT_ID%" ||  GOTO BuildFailed
 
 @ECHO.
 @ECHO  **** CREATE RELEASE NUGET PACKAGE ****
 %NUGET_COMMAND% pack "%NUGET_PACKAGE_FOLDER%\%NUGET_PACKAGE_ID%.nuspec" -Version %PACKAGE_VERSION% ^
-     -NonInteractive -OutputDirectory %ARTIFACTS% ||  GOTO BuildFailed
+     -NonInteractive -OutputDirectory %ARTIFACTS% -Properties "commit_id=%COMMIT_ID%" ||  GOTO BuildFailed
 
  
 @ECHO.
