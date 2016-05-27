@@ -6,7 +6,10 @@
     <owners>Wes Day</owners>
     <authors>Wes Day and Syed Ahmed</authors>
     <summary>Write structured logging events to a Kafka topic using Serilog in .NET</summary>
-    <description>git commit hash: $commit_id$</description>
+    <description>
+      Write structured logging events to a Kafka topic using Serilog in .NET.
+      Git commit hash: $commit_id$
+    </description>
     <language>en-US</language>
     <projectUrl>https://github.com/wespday/serilog-sinks-kafka</projectUrl>
     <licenseUrl>https://github.com/wespday/serilog-sinks-kafka/blob/master/LICENSE</licenseUrl>
