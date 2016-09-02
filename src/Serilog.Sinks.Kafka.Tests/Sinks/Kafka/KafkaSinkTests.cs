@@ -21,8 +21,7 @@ namespace Serilog.Sinks.Kafka.Tests.Sinks.Kafka
     using System.Linq;
     using System.Threading.Tasks;
 
-    using KafkaNet.Model;
-    using KafkaNet.Protocol;
+    using kafka4net;
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -70,7 +69,7 @@ namespace Serilog.Sinks.Kafka.Tests.Sinks.Kafka
             // Then
             kafkaClient
                 .Received(1)
-                .SendMessagesAsync(Arg.Is<ICollection<Message>>(val => val.Count == logEvents.Length), Arg.Any<string>(), Arg.Any<KafkaOptions>());
+                .SendMessagesAsync(Arg.Is<ICollection<Message>>(val => val.Count == logEvents.Length), Arg.Any<IReadOnlyCollection<Uri>>(), Arg.Any<ProducerConfiguration>());
         }
 
         [TestMethod]
@@ -89,7 +88,7 @@ namespace Serilog.Sinks.Kafka.Tests.Sinks.Kafka
             // Then
             kafkaClient
                 .Received(1)
-                .SendMessagesAsync(Arg.Is<ICollection<Message>>(val => val.Count == logEvents.Length), Arg.Any<string>(), Arg.Any<KafkaOptions>());
+                .SendMessagesAsync(Arg.Is<ICollection<Message>>(val => val.Count == logEvents.Length), Arg.Any<IReadOnlyCollection<Uri>>(), Arg.Any<ProducerConfiguration>());
         }
     }
 }

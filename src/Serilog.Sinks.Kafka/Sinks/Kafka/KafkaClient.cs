@@ -22,9 +22,7 @@ namespace Serilog.Sinks.Kafka
     using System.Linq;
     using System.Threading.Tasks;
 
-    using KafkaNet;
-    using KafkaNet.Model;
-    using KafkaNet.Protocol;
+    using kafka4net;
 
     internal class KafkaClient : AbstractKafkaClient
     {
@@ -32,17 +30,22 @@ namespace Serilog.Sinks.Kafka
 
     internal abstract class AbstractKafkaClient
     {
-        internal virtual async Task SendMessagesAsync(ICollection<Message> kafkaMessages, string kafkaTopic, KafkaOptions kafkaOptions)
+        internal virtual async Task SendMessagesAsync(ICollection<Message> kafkaMessages, IReadOnlyCollection<Uri> brokers, ProducerConfiguration producerConfiguration)
         {
-            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(kafkaTopic));
             Contract.Requires<ArgumentException>(kafkaMessages != null && kafkaMessages.Any());
-            Contract.Requires<ArgumentNullException>(kafkaOptions != null);
+            Contract.Requires<ArgumentNullException>(brokers != null && brokers.Any());
+            Contract.Requires<ArgumentNullException>(producerConfiguration != null);
 
-            using (var router = new BrokerRouter(kafkaOptions))
-            using (var kafkaClient = new Producer(router))
+            var connectionString = string.Join(", ", brokers.Select(uri => uri.ToString()));
+            var producer = new Producer(connectionString, producerConfiguration);
+            await producer.ConnectAsync().ConfigureAwait(false);
+
+            foreach (var kafkaMessage in kafkaMessages)
             {
-                await kafkaClient.SendMessageAsync(kafkaTopic, kafkaMessages).ConfigureAwait(false);
+                producer.Send(kafkaMessage);
             }
+
+            await producer.CloseAsync(TimeSpan.FromSeconds(20)).ConfigureAwait(false);
         }
     }
 }

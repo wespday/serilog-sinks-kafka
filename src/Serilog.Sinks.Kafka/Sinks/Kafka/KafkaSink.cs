@@ -24,10 +24,10 @@ namespace Serilog.Sinks.Kafka
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
 
-    using KafkaNet.Model;
-    using KafkaNet.Protocol;
+    using kafka4net;
 
     using PeriodicBatching;
 
@@ -40,9 +40,9 @@ namespace Serilog.Sinks.Kafka
     internal class KafkaSink : PeriodicBatchingSink
     {
         private readonly JsonFormatter jsonFormatter;
-        private readonly KafkaSinkOptions kafkaSinkOptions;
-        private readonly KafkaOptions kafkaOptions;
+        private readonly ProducerConfiguration producerConfiguration;
         private readonly AbstractKafkaClient kafkaClient;
+        private readonly IReadOnlyCollection<Uri> kafkaBrokers;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="KafkaSink"/> class.
@@ -58,11 +58,14 @@ namespace Serilog.Sinks.Kafka
         {
             Contract.Requires<ArgumentNullException>(options != null);
             Contract.Requires<ArgumentNullException>(kafkaClient != null);
+            Contract.Requires<ArgumentNullException>(options.Brokers != null);
 
-            this.kafkaSinkOptions = options;
             this.kafkaClient = kafkaClient;
-            this.kafkaOptions = new KafkaOptions(this.kafkaSinkOptions.Brokers);
+            this.producerConfiguration = new ProducerConfiguration(options.Topic, options.Period);
             this.jsonFormatter = new JsonFormatter(renderMessage: options.RenderSerilogMessage);
+            this.kafkaBrokers = options.Brokers;
+
+            Contract.Assume(this.kafkaBrokers.Any());
         }
 
         internal async Task EmitBatchInternalAsync(ICollection<LogEvent> events)
@@ -75,7 +78,7 @@ namespace Serilog.Sinks.Kafka
             }
 
             var kafkaMessages = events.Select(this.CreateKafkaMessage).ToArray();
-            await this.kafkaClient.SendMessagesAsync(kafkaMessages, this.kafkaSinkOptions.Topic, this.kafkaOptions).ConfigureAwait(false);
+            await this.kafkaClient.SendMessagesAsync(kafkaMessages, this.kafkaBrokers, this.producerConfiguration).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -110,7 +113,7 @@ namespace Serilog.Sinks.Kafka
             using (var eventText = new StringWriter(CultureInfo.InvariantCulture))
             {
                 this.jsonFormatter.Format(loggingEvent, eventText);
-                var message = new Message(eventText.ToString());
+                var message = new Message { Value = Encoding.UTF8.GetBytes(eventText.ToString()) };
                 return message;
             }
         }
@@ -119,8 +122,8 @@ namespace Serilog.Sinks.Kafka
         private void ObjectInvariant()
         {
             Contract.Invariant(this.jsonFormatter != null);
-            Contract.Invariant(this.kafkaSinkOptions != null);
-            Contract.Invariant(this.kafkaOptions != null);
+            Contract.Invariant(this.producerConfiguration != null);
+            Contract.Invariant(this.kafkaBrokers != null && this.kafkaBrokers.Any());
         }
     }
 }
