@@ -17,7 +17,9 @@
 namespace Serilog
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Diagnostics.Contracts;
+    using System.Threading;
 
     using Serilog.Configuration;
     using Serilog.Sinks.Kafka;
@@ -42,7 +44,7 @@ namespace Serilog
         /// <exception cref="ArgumentNullException">
         /// A required parameter is null.
         /// </exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Caller must dispose configuration")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Caller must dispose configuration")]
         public static LoggerConfiguration Kafka(
             this LoggerSinkConfiguration loggerConfiguration,
             KafkaSinkOptions options)
@@ -51,9 +53,25 @@ namespace Serilog
             Contract.Requires(options != null);
             Contract.Ensures(Contract.Result<LoggerConfiguration>() != null);
 
-            var result = loggerConfiguration.Sink(new KafkaSink(new KafkaClient(), options));
+            var kafkaClient = new KafkaClient(options);
+            var kafkaSink = new KafkaSink(kafkaClient, options);
+            var result = loggerConfiguration.Sink(kafkaSink);
             Contract.Assume(result != null);
             return result;
+        }
+
+        /// <summary>
+        /// Hack to approximate a clean shutdown of Serilog v1.
+        /// See: https://github.com/serilog/serilog/issues/8
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        public static void CloseAndFlush(this ILogger logger)
+        {
+            // Attempt to wait for pending message batches to be sent
+            Thread.Sleep(TimeSpan.FromMilliseconds(1200));
+
+            var disposableLogger = logger as IDisposable;
+            disposableLogger?.Dispose();
         }
     }
 }

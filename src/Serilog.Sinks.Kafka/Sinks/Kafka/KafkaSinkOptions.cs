@@ -20,6 +20,7 @@ namespace Serilog.Sinks.Kafka
 {
     using System;
     using System.Diagnostics.Contracts;
+    using System.Linq;
 
     /// <summary>
     /// The kafka sink options.
@@ -33,6 +34,9 @@ namespace Serilog.Sinks.Kafka
         /// <param name="brokers">The Kafka broker endpionts to log to</param>
         public KafkaSinkOptions(string topic, Uri[] brokers)
         {
+            Contract.Requires<ArgumentException>(topic != null);
+            Contract.Requires<ArgumentException>(brokers != null && brokers.Any());
+
             this.Topic = topic;
             this.Brokers = brokers;
         }
@@ -65,7 +69,7 @@ namespace Serilog.Sinks.Kafka
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
-            Contract.Invariant(this.Brokers != null);
+            Contract.Invariant(this.Brokers != null && this.Brokers.Any());
             Contract.Invariant(this.Topic != null);
         }
     }

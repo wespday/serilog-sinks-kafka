@@ -26,26 +26,93 @@ namespace Serilog.Sinks.Kafka
 
     internal class KafkaClient : AbstractKafkaClient
     {
+        internal KafkaClient(KafkaSinkOptions options)
+            : base(options)
+        {
+            Contract.Requires<ArgumentNullException>(options != null);
+        }
     }
 
-    internal abstract class AbstractKafkaClient
+    internal abstract class AbstractKafkaClient : IDisposable
     {
-        internal virtual async Task SendMessagesAsync(ICollection<Message> kafkaMessages, IReadOnlyCollection<Uri> brokers, ProducerConfiguration producerConfiguration)
+        private readonly KafkaSinkOptions options;
+        private readonly ProducerConfiguration producerConfiguration;
+        private Producer kafkaProducer;
+
+        protected AbstractKafkaClient(KafkaSinkOptions options)
+        {
+            Contract.Requires<ArgumentNullException>(options != null);
+
+            this.options = options;
+            this.producerConfiguration = new ProducerConfiguration(options.Topic);
+        }
+
+        [ContractVerification(false)]
+        public void Dispose()
+        {
+            var producer = this.kafkaProducer;
+
+            if (producer != null)
+            {
+                this.kafkaProducer = null;
+
+                producer.CloseAsync(TimeSpan.FromSeconds(10)).Wait();
+            }
+        }
+
+        internal virtual async Task SendMessagesAsync(IReadOnlyCollection<Message> kafkaMessages)
         {
             Contract.Requires<ArgumentException>(kafkaMessages != null && kafkaMessages.Any());
-            Contract.Requires<ArgumentNullException>(brokers != null && brokers.Any());
-            Contract.Requires<ArgumentNullException>(producerConfiguration != null);
 
-            var connectionString = string.Join(", ", brokers.Select(uri => uri.ToString()));
-            var producer = new Producer(connectionString, producerConfiguration);
-            await producer.ConnectAsync().ConfigureAwait(false);
+            var producer = await this.GetOrCreateKafkaProducerAsync().ConfigureAwait(false);
 
             foreach (var kafkaMessage in kafkaMessages)
             {
                 producer.Send(kafkaMessage);
             }
+        }
 
-            await producer.CloseAsync(TimeSpan.FromSeconds(20)).ConfigureAwait(false);
+       private async Task<Producer> CreateKafkaProducerAsync()
+        {
+            // Note: Currently the Producer does not want the protocol passed in
+            var connectionString = string.Join(", ", this.options.Brokers.Select(uri => string.IsNullOrEmpty(uri.Authority) ? uri.AbsoluteUri : uri.Authority));
+
+           // ReSharper disable once UseObjectOrCollectionInitializer -- Harder to debug lambda
+            var producer = new Producer(connectionString, this.producerConfiguration);
+
+            producer.OnPermError = (exception, messages) =>
+            {
+                this.kafkaProducer = null;
+            };
+
+            producer.OnTempError += messages =>
+            {
+                Contract.Assume(false, "Kafka Message Delilvery Error");
+            };
+
+            await producer.ConnectAsync().ConfigureAwait(false);
+
+            return producer;
+        }
+
+        private async Task<Producer> GetOrCreateKafkaProducerAsync()
+        {
+            // Use a temp producer variable here beacuase this.kafkaProducer could be reset to null in another thread
+            var producer = this.kafkaProducer;
+
+            if (producer == null)
+            {
+                this.kafkaProducer = producer = await this.CreateKafkaProducerAsync().ConfigureAwait(false);
+            }
+
+            return producer;
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.options != null);
+            Contract.Invariant(this.producerConfiguration != null);
         }
     }
 }

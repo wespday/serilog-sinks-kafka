@@ -43,6 +43,8 @@ namespace Serilog.Sinks.Kafka.Tests
                 "The execution time of this test is  {@now}",
                 new { DateTimeOffset.Now.Hour, DateTimeOffset.Now.Minute });
 
+            log.CloseAndFlush();
+
             Assert.IsTrue(true);
         }
 

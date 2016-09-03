@@ -40,8 +40,8 @@ namespace Serilog.Sinks.Kafka.Tests.Sinks.Kafka
         public void CanSendEmptyMessageBatch()
         {
             // Given
-            var kafkaClient = new KafkaClient();
             var options = new KafkaSinkOptions("topic", new[] { new Uri("http://sample") });
+            var kafkaClient = new KafkaClient(options);
             var systemUnderTest = new KafkaSink(kafkaClient, options);
             var logEvents = new LogEvent[0];
             
@@ -69,7 +69,7 @@ namespace Serilog.Sinks.Kafka.Tests.Sinks.Kafka
             // Then
             kafkaClient
                 .Received(1)
-                .SendMessagesAsync(Arg.Is<ICollection<Message>>(val => val.Count == logEvents.Length), Arg.Any<IReadOnlyCollection<Uri>>(), Arg.Any<ProducerConfiguration>());
+                .SendMessagesAsync(Arg.Is<IReadOnlyCollection<Message>>(val => val.Count == logEvents.Length));
         }
 
         [TestMethod]
@@ -88,7 +88,7 @@ namespace Serilog.Sinks.Kafka.Tests.Sinks.Kafka
             // Then
             kafkaClient
                 .Received(1)
-                .SendMessagesAsync(Arg.Is<ICollection<Message>>(val => val.Count == logEvents.Length), Arg.Any<IReadOnlyCollection<Uri>>(), Arg.Any<ProducerConfiguration>());
+                .SendMessagesAsync(Arg.Is<IReadOnlyCollection<Message>>(val => val.Count == logEvents.Length));
         }
     }
 }

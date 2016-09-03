@@ -32,8 +32,10 @@ public void KafkaConnectionTest()
         .CreateLogger();
 
     log.Information(
-        "The execution time of this test is  {@now}", 
+        "The execution time of this test is  {@now}",
         new { DateTimeOffset.Now.Hour, DateTimeOffset.Now.Minute });
+
+    log.CloseAndFlush();
 }
 ```
 

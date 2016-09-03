@@ -40,9 +40,7 @@ namespace Serilog.Sinks.Kafka
     internal class KafkaSink : PeriodicBatchingSink
     {
         private readonly JsonFormatter jsonFormatter;
-        private readonly ProducerConfiguration producerConfiguration;
         private readonly AbstractKafkaClient kafkaClient;
-        private readonly IReadOnlyCollection<Uri> kafkaBrokers;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="KafkaSink"/> class.
@@ -58,14 +56,9 @@ namespace Serilog.Sinks.Kafka
         {
             Contract.Requires<ArgumentNullException>(options != null);
             Contract.Requires<ArgumentNullException>(kafkaClient != null);
-            Contract.Requires<ArgumentNullException>(options.Brokers != null);
 
             this.kafkaClient = kafkaClient;
-            this.producerConfiguration = new ProducerConfiguration(options.Topic, options.Period);
             this.jsonFormatter = new JsonFormatter(renderMessage: options.RenderSerilogMessage);
-            this.kafkaBrokers = options.Brokers;
-
-            Contract.Assume(this.kafkaBrokers.Any());
         }
 
         internal async Task EmitBatchInternalAsync(ICollection<LogEvent> events)
@@ -78,7 +71,13 @@ namespace Serilog.Sinks.Kafka
             }
 
             var kafkaMessages = events.Select(this.CreateKafkaMessage).ToArray();
-            await this.kafkaClient.SendMessagesAsync(kafkaMessages, this.kafkaBrokers, this.producerConfiguration).ConfigureAwait(false);
+            await this.kafkaClient.SendMessagesAsync(kafkaMessages).ConfigureAwait(false);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            this.kafkaClient.Dispose();
+            base.Dispose(disposing);
         }
 
         /// <summary>
@@ -122,8 +121,7 @@ namespace Serilog.Sinks.Kafka
         private void ObjectInvariant()
         {
             Contract.Invariant(this.jsonFormatter != null);
-            Contract.Invariant(this.producerConfiguration != null);
-            Contract.Invariant(this.kafkaBrokers != null && this.kafkaBrokers.Any());
+            Contract.Invariant(this.kafkaClient != null);
         }
     }
 }
