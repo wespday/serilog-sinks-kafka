@@ -56,5 +56,5 @@ Publishes a message like this:
 }
 ```
 ## TODO
-* Test with [ELK](https://www.elastic.co/webinars/introduction-elk-stack) stack
 * Support durable store-and-forward messaging
+* Keep up with the latest Serilog, Kafka, .Net frameworks, etc...
